@@ -1,0 +1,127 @@
+﻿@using System.Threading
+@model IEnumerable<FirstProject.Models.BossViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link type="text/css" href="~/Content/Site.css" rel="stylesheet" />
+    <title>Index</title>
+</head>
+<script type="text/javascript">
+    function updateRespTime() {
+        const lines = document.getElementsByClassName('line');
+
+        for (const line of lines) {
+            const fall_raw = line.getElementsByClassName('fall_time')[0].innerText;
+            const resp_raw = line.getElementsByClassName('resp_time')[0];
+
+            const [fall_date_raw, fall_time_raw] = fall_raw.split(' ');
+            const [fall_day, fall_month, fall_year] = fall_date_raw.split('.');
+
+            const fall_timestamp = new Date(`${fall_month}.${fall_day}.${fall_year} ${fall_time_raw}`).getTime();
+            const [hours, minutes, seconds] = resp_raw.innerText.split('.').map(item => +item);
+
+            const resp_miliseconds = (((((hours * 60) + minutes) * 60) + seconds) * 1000);
+            const time_now = new Date(Date.now());
+            const result_miliseconds = fall_timestamp + resp_miliseconds - (((((time_now.getHours() * 60) + time_now.getMinutes()) * 60) + time_now.getSeconds()) * 1000);
+
+            line.getElementsByClassName('res_time')[0].innerText = new Date(result_miliseconds);
+           
+            if (result_miliseconds < 10 * 1000) {
+                const res = document.getElementsByClassName('res_time');
+                res.innerText = result_miliseconds;
+            }
+        }
+    }
+    function init() {
+        setInterval(updateRespTime, 1000);
+    }
+</script>
+<body onload="init()">
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>
+                            Имя босса
+                        </th>
+                        <th>
+                            Упал
+                        </th>
+                        <th>
+                            Реснется
+                        </th>
+                        <th>
+                            По кд раз
+                        </th>
+                        <th>
+                            Время респа
+                        </th>
+                        <th>
+                            Действия
+                        </th>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <th>
+                                Только для админа
+                            </th>
+                        }
+
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="line">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td class="fall_time">
+                                @Html.DisplayFor(modelItem => item.LastTime)
+                            </td>
+
+                            <td>
+
+                                <text class="res_time"></text>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.KdCount)
+                            </td>
+                            <td>
+                                <text class="resp_time">
+                                    @string.Format("{0}.05.00", item.KdTime < 10 ? "0" + item.KdTime.ToString() : item.KdTime.ToString())
+                                </text>
+
+                            </td>
+                            <td>
+                                По кд// Упал сейчас// Установить время
+                            </td>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                                </td>
+                            }
+
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-4">
+
+            @Html.ActionLink("Create New", "Create", new { }, new { @class = "button_1596547873487" })
+        </div>
+    </div>
+
+</body>
+</html>

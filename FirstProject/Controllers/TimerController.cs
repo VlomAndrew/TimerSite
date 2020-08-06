@@ -12,6 +12,7 @@ namespace FirstProject.Controllers
         [Authorize(Roles = "Admin,Officer")]
         public ActionResult Index()
         {
+            
             return View();
         }
     }

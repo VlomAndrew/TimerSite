@@ -27,11 +27,11 @@
                     <li>@Html.ActionLink("Контакты", "Contact", "Home")</li>
                     @if (User.IsInRole("Oficer") || User.IsInRole("Admin"))
                     {
-                        <li>@Html.ActionLink("Таймер", "Index", "Timer")</li>
+                        <li>@Html.ActionLink("Таймер", "Index", "BossViewModels")</li>
                     }
                     @if (User.IsInRole("Admin"))
                     {
-                        <li>@Html.ActionLink("Настройка пользователей","Index","ChangeUser")</li>
+                        <li>@Html.ActionLink("Настройка пользователей", "Index", "ChangeUser")</li>
                     }
 
                 </ul>
