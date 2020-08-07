@@ -30,8 +30,12 @@
             const resp_miliseconds = (((((hours * 60) + minutes) * 60) + seconds) * 1000);
             const time_now = new Date(Date.now());
             const result_miliseconds = fall_timestamp + resp_miliseconds - (((((time_now.getHours() * 60) + time_now.getMinutes()) * 60) + time_now.getSeconds()) * 1000);
-
-            line.getElementsByClassName('res_time')[0].innerText = new Date(result_miliseconds);
+            const res_date = new Date(result_miliseconds);
+            const in_what_time = fall_timestamp + resp_miliseconds;
+            const what_time = new Date(in_what_time);
+            
+            
+            line.getElementsByClassName('res_time')[0].innerText = res_date.getHours() + ":" + res_date.getMinutes() + ":" + res_date.getSeconds() + "\n(Реснется в " + what_time.getHours() + ":" + what_time.getMinutes() + ":" + what_time.getSeconds()+")";
            
             if (result_miliseconds < 10 * 1000) {
                 const res = document.getElementsByClassName('res_time');
@@ -41,6 +45,13 @@
     }
     function init() {
         setInterval(updateRespTime, 1000);
+    }
+    function SetNow(elem) {
+        const lines = document.getElementsByClassName(`line`);
+        for (const line of lines) {
+
+        }
+        text.innerText = new Date(Date.now());
     }
 </script>
 <body onload="init()">
@@ -99,13 +110,14 @@
 
                             </td>
                             <td>
-                                По кд// Упал сейчас// Установить время
+                                <button class="button_set_now" onclick="SetNow()">Упал сейчас</button>
+                                Упал сейчас// Установить время
                             </td>
                             @if (User.IsInRole("Admin"))
                             {
                                 <td>
                                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                                    @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |*@
                                     @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                                 </td>
                             }

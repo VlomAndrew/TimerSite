@@ -19,7 +19,7 @@ namespace FirstProject.Models
 
         
 
-        public DateTime LastTime { get; set; }
+        public DateTime? LastTime { get; set; }
 
         //public DateTime LastDateTime { get; set; }
     }

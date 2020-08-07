@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Windows.Forms.VisualStyles;
 using FirstProject.Data;
 using FirstProject.Models;
 
@@ -84,8 +85,6 @@ namespace FirstProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                
-                
                 db.Entry(bossViewModel).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
