@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 using System.Windows.Forms.VisualStyles;
 using FirstProject.Data;
 using FirstProject.Models;
@@ -52,7 +53,12 @@ namespace FirstProject.Controllers
         {
             if (ModelState.IsValid)
             {
-                bossViewModel.LastTime = DateTime.Now;
+                var dtnow = DateTime.Now;
+
+                var time_str = string.Format("{0}.{1}.{2}", dtnow.Hour < 10 ? "0"+dtnow.Hour.ToString():dtnow.Hour.ToString()
+                    , dtnow.Minute < 10 ? "0"+dtnow.Minute.ToString() : dtnow.Minute.ToString()
+                    , dtnow.Second < 10 ? "0" + dtnow.Second.ToString(): dtnow.Second.ToString());
+                bossViewModel.LastTime = time_str;
                 db.BossViewModels.Add(bossViewModel);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -62,7 +68,7 @@ namespace FirstProject.Controllers
         }
 
         // GET: BossViewModels/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(int? id, bool fl = false)
         {
             if (id == null)
             {
@@ -73,7 +79,13 @@ namespace FirstProject.Controllers
             {
                 return HttpNotFound();
             }
-            return View(bossViewModel);
+
+            if (!fl)
+            {
+                return View(bossViewModel);
+            }
+
+            return Edit(bossViewModel,fl);
         }
 
         // POST: BossViewModels/Edit/5
@@ -81,10 +93,18 @@ namespace FirstProject.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name,KdCount,KdTime")] BossViewModel bossViewModel)
+        public ActionResult Edit([Bind(Include = "Id,Name,KdCount,KdTime,LastTime")] BossViewModel bossViewModel,bool fl = false)
         {
             if (ModelState.IsValid)
             {
+
+                var dtnow = DateTime.Now;
+                
+                var time_str = string.Format("{0}.{1}.{2}", dtnow.Hour < 10 ? "0" + dtnow.Hour.ToString() : dtnow.Hour.ToString()
+                    , dtnow.Minute < 10 ? "0" + dtnow.Minute.ToString() : dtnow.Minute.ToString()
+                    , dtnow.Second < 10 ? "0" + dtnow.Second.ToString() : dtnow.Second.ToString());
+                if (fl) 
+                    bossViewModel.LastTime = time_str;
                 db.Entry(bossViewModel).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

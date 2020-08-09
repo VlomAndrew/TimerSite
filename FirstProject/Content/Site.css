@@ -53,3 +53,7 @@ textarea {
     cursor: pointer;
     
 }
+
+tr {
+    background-color: aquamarine;
+}

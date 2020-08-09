@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width" />
     <link type="text/css" href="~/Content/Site.css" rel="stylesheet" />
     <title>Index</title>
+
 </head>
 <script type="text/javascript">
     function updateRespTime() {
@@ -24,116 +25,269 @@
             const [fall_date_raw, fall_time_raw] = fall_raw.split(' ');
             const [fall_day, fall_month, fall_year] = fall_date_raw.split('.');
 
-            const fall_timestamp = new Date(`${fall_month}.${fall_day}.${fall_year} ${fall_time_raw}`).getTime();
+            const [fall_hours, fall_min, fall_sec] = fall_raw.split('.').map(item=>+item);
+
+
+            const fall_timestamp = (((((fall_hours * 60) + fall_min) * 60) + fall_sec) * 1000);
             const [hours, minutes, seconds] = resp_raw.innerText.split('.').map(item => +item);
 
             const resp_miliseconds = (((((hours * 60) + minutes) * 60) + seconds) * 1000);
-            const time_now = new Date(Date.now());
-            const result_miliseconds = fall_timestamp + resp_miliseconds - (((((time_now.getHours() * 60) + time_now.getMinutes()) * 60) + time_now.getSeconds()) * 1000);
-            const res_date = new Date(result_miliseconds);
+            var time_now = new Date(Date.now());
+            time_now.setMinutes(time_now.getMinutes() + time_now.getTimezoneOffset() + 180);
+            var time_now_mili = (((((time_now.getHours() * 60) + time_now.getMinutes()) * 60) + time_now.getSeconds()) *
+                1000);
+            const result_miliseconds = fall_timestamp + resp_miliseconds - time_now_mili;
+            const res_date = get_time(result_miliseconds,":");
             const in_what_time = fall_timestamp + resp_miliseconds;
-            const what_time = new Date(in_what_time);
-            
-            
-            line.getElementsByClassName('res_time')[0].innerText = res_date.getHours() + ":" + res_date.getMinutes() + ":" + res_date.getSeconds() + "\n(Реснется в " + what_time.getHours() + ":" + what_time.getMinutes() + ":" + what_time.getSeconds()+")";
-           
-            if (result_miliseconds < 10 * 1000) {
-                const res = document.getElementsByClassName('res_time');
-                res.innerText = result_miliseconds;
+
+
+
+            line.getElementsByClassName('res_time')[0].innerText = res_date + "\nРеснется в " + get_time(in_what_time,":");
+
+            if (result_miliseconds < 1 ) {
+
+                const res = line.getElementsByClassName('fall_time');
+                res[0].innerText = get_time(time_now_mili, ".");
+                line.getElementsByClassName('cdcount')[0].innerText = parseInt(line.getElementsByClassName('cdcount')[0].innerText) + 1;
             }
         }
     }
-    function init() {
-        setInterval(updateRespTime, 1000);
-    }
-    function SetNow(elem) {
-        const lines = document.getElementsByClassName(`line`);
-        for (const line of lines) {
 
+    function get_time(milisec,separ) {
+        var time = milisec;
+        var rev = false;
+        if (time<0) {
+            time = time * -1;
+            rev = true;
         }
-        text.innerText = new Date(Date.now());
+
+        time = time / 1000;
+
+        var h = Math.trunc(time / 3600);
+
+
+
+        time = time - (h *  3600);
+
+        var min = Math.trunc(time / 60);
+
+        time = time - (min * 60);
+
+        var sec = time;
+
+        var calch = (h > 23) ? h - 24 : h;
+        var minstr = (min < 10) ? "0" + min : min;
+        var hstr = (calch < 10) ? "0" + calch : calch;
+        var secstr = (sec < 10) ? "0" + sec : sec;
+        var minus_str = (rev) ? "-" : "";
+        return minus_str + hstr + separ + minstr + separ + secstr;
+    }
+
+    function vison(elem_id) {
+        var getelem_id = document.getElementById(elem_id);
+
+        //getelem_id.getElementsByClassName('text_to_set_time')[0].style.display = 'block';
+        //getelem_id.getElementsByClassName('text_to_set_time')[0].value = "";
+        //getelem_id.getElementsByClassName('button_set_time_conf')[0].style.display = 'block';
+        //getelem_id.getElementsByClassName('button_set_time_cancel')[0].style.display = 'block';
+    }
+
+    function canceltime(elem_id) {
+        var getelem_id = document.getElementById(elem_id);
+        console.log(getelem_id);
+        //getelem_id.getElementsByClassName('text_to_set_time')[0].style.display = 'none';
+        //getelem_id.getElementsByClassName('button_set_time_conf')[0].style.display = 'none';
+        //getelem_id.getElementsByClassName('button_set_time_cancel')[0].style.display = 'none';
+    }
+
+    function unvis() {
+        var lines = document.getElementsByClassName('line');
+
+        for (var line of lines) {
+            //var elem1 = line.getElementsByClassName('button_set_time_cancel');
+            //var elem2 = line.getElementsByClassName('text_to_set_time');
+            //var elem3 = line.getElementsByClassName('button_set_time_conf');
+
+            //elem2[0].style.display = 'none';
+            //elem3[0].style.display = 'none';
+            //elem1[0].style.display = 'none';
+        }
+    }
+
+    function set_custom_time(elem_id) {
+        var getelem_id = document.getElementById(elem_id);
+        getelem_id.getElementsByClassName('fall_time')[0].innerText =
+            getelem_id.getElementsByClassName('text_to_set_time')[0].value;
+        getelem_id.getElementsByClassName('cdcount')[0].innerText = 0;
+        console.log(getelem_id.getElementsByClassName('fall_time')[0].innerText);
+        console.log(getelem_id.getElementsByClassName('text_to_set_time').value);
+        console.log(getelem_id.getElementsByClassName('text_to_set_time')[0].value);
+        var model = @Html.Raw(Json.Encode(Model));
+        console.log(model);
+        var id_f = elem_id.slice(elem_id.indexOf('{') + 1, elem_id.indexOf('}'));
+
+
+        const lines = document.getElementsByClassName('line');
+        var i = 0;
+        for (const line of lines) {
+            if (line.contains(document.getElementById(elem_id))) {
+                console.log('yes');
+                continue;
+
+            }
+            i = i + 1;
+        }
+        console.log(model[parseInt(id_f)]);
+
+        console.log(model[i]);
+
+        
+
+        unvis();
+    }
+
+    function foo() {
+        return '1';
+    }
+
+
+    function init() {
+        unvis();
+        setInterval(updateRespTime, 1000);
+
+    }
+
+    function SetNow(elem_id) {
+
+        var getelem_id = document.getElementById(elem_id);
+        console.log(getelem_id);
+        var now_t = new Date(Date.now());
+        now_t.setMinutes(now_t.getMinutes() + now_t.getTimezoneOffset() + 180);
+        var res = (((((now_t.getHours() * 60) + now_t.getMinutes()) * 60) + now_t.getSeconds()) * 1000);
+        getelem_id.getElementsByClassName('fall_time')[0].innerText = get_time(res, ".");
+        getelem_id.getElementsByClassName('cdcount')[0].innerText = 0;
+        const lines = document.getElementsByClassName('line');
+
     }
 </script>
-<body onload="init()">
+
+    <body onload="init()">
+
     <div class="row">
         <div class="col-md-8">
             <table class="table">
                 <tbody>
-                    <tr>
+                <tr>
+                    <th>
+                        Имя босса
+                    </th>
+                    <th>
+                        Упал
+                    </th>
+                    <th>
+                        Реснется
+                    </th>
+                    <th>
+                        По кд раз
+                    </th>
+                    <th>
+                        Время респа
+                    </th>
+                    <th>
+                        Действия
+                    </th>
+                    @if (User.IsInRole("Admin"))
+                    {
                         <th>
-                            Имя босса
+                            Только для админа
                         </th>
-                        <th>
-                            Упал
-                        </th>
-                        <th>
-                            Реснется
-                        </th>
-                        <th>
-                            По кд раз
-                        </th>
-                        <th>
-                            Время респа
-                        </th>
-                        <th>
-                            Действия
-                        </th>
+                    }
+
+                </tr>
+                @foreach (var item in Model)
+                {
+
+                    <tr class="line" id="line_{@item.Id}">
+                        <td>
+                            @Html.HiddenFor(m => item.Name)
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td class="fall_time">
+                            
+                            @Html.DisplayFor(modelItem => item.LastTime)
+                            
+                        </td>
+
+                        <td>
+
+                            <text class="res_time"></text>
+                        </td>
+                        <td class="cdcount">
+                            @Html.DisplayFor(modelItem => item.KdCount)
+                        </td>
+
+                        <td class="resp_time">
+                            @Html.DisplayFor(modelItem => item.KdTime)
+                        </td>
+
+
+                        <td>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    @*<button class="button_set_now" id="button_{@item.Id}" onclick="SetNow('line_{@item.Id}')" type="submit">Упал сейчас</button>*@
+                                    <form action="Edit.cshtml" method="post">
+                                        @Html.ActionLink("Упал сейчас", "Edit", new {id = item.Id, fl = true}, new {@class = "button_set_now", @id = "button_{@item.Id}", onclick = "SetNow('line_{@item.Id}')"})
+                                        @*<input  class="button_set_now" id="button_{@item.Id}" onclick="SetNow('line_{@item.Id}')" type="submit">Упал сейчас*@
+                                    </form>
+                                </div>
+                                <div class="col-xs-6">
+                                    @*<button type="button" class="button_set_time" id="button_set_time_conf{@item.Id}" onclick="vison('line_{@item.Id}')">Установить время</button>*@
+                                    @Html.ActionLink("Установить время", "Edit", new { id = item.Id, fl = false }, new { @class = "button_set_time", @id = "button_set_time_conf{@item.Id}" })
+                                </div>
+                            </div>
+                            @*<div class="row">
+                                <div class="col-md-8">
+                                    <input type="text" class="text_to_set_time" id="text_to_set_time_{@item.Id}">
+                                </div>
+                            </div>*@
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    @*<button class="button_set_time_conf" id="button_set_time_conf{@item.Id}" onclick="set_custom_time('line_{@item.Id}')">Подтвердить</button>
+        <form action="Edit.cshtml" method="post">
+            @Html.ActionLink("Подтвердить", "Edit", new {id = item.Id, fl = true}, new {@class = "button_set_time_conf", @id = "button_set_time_conf{@item.Id}"})
+            <input  class="button_set_now" id="button_{@item.Id}" onclick="SetNow('line_{@item.Id}')" type="submit">Упал сейчас
+
+        </form>*@
+                                    @*@Html.ActionLink("Подтвердить", "Edit", new { id = item.Id, fl = false }, new { @class = "button_set_time_conf", @id = "button_set_time_conf{@item.Id}" })
+                                </div>
+                                <div class="col-xs-4">
+                                    <button type="button" class="button_set_time_cancel" id="button_set_time_cancel{@item.Id}" onclick="canceltime('line_{@item.Id}')">Отмена</button>*""/*@
+                                </div>
+                            </div>
+
+                        </td>
                         @if (User.IsInRole("Admin"))
                         {
-                            <th>
-                                Только для админа
-                            </th>
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new {id = item.Id}) |
+                                @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |*@
+                                @Html.ActionLink("Delete", "Delete", new {id = item.Id})
+                            </td>
                         }
 
+
                     </tr>
-                    @foreach (var item in Model)
-                    {
-                        <tr class="line">
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </td>
-                            <td class="fall_time">
-                                @Html.DisplayFor(modelItem => item.LastTime)
-                            </td>
-
-                            <td>
-
-                                <text class="res_time"></text>
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.KdCount)
-                            </td>
-                            <td>
-                                <text class="resp_time">
-                                    @string.Format("{0}.05.00", item.KdTime < 10 ? "0" + item.KdTime.ToString() : item.KdTime.ToString())
-                                </text>
-
-                            </td>
-                            <td>
-                                <button class="button_set_now" onclick="SetNow()">Упал сейчас</button>
-                                Упал сейчас// Установить время
-                            </td>
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <td>
-                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                                    @*@Html.ActionLink("Details", "Details", new { id = item.Id }) |*@
-                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                                </td>
-                            }
-
-
-                        </tr>
-                    }
+                }
                 </tbody>
             </table>
         </div>
 
         <div class="col-md-4">
 
-            @Html.ActionLink("Create New", "Create", new { }, new { @class = "button_1596547873487" })
+            @Html.ActionLink("Create New", "Create", new {}, new {@class = "button_1596547873487"})
         </div>
     </div>
 
-</body>
+    </body>
+
 </html>

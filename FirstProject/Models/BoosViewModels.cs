@@ -11,15 +11,15 @@ namespace FirstProject.Models
         [Display(Name="Название босса")]
         public string Name { get; set; }
 
-        [Display(Name="Время респа в часах без 5 минут!!")]
-        public int KdTime { get; set; }
+        [Display(Name="Время респа в формате чч.мм.сс!!!Проверяйте плз эту хуйню иначе не будет работать!")]
+        public string KdTime { get; set; }
 
         
         public int KdCount { get; set; }
 
         
 
-        public DateTime? LastTime { get; set; }
+        public string LastTime { get; set; }
 
         //public DateTime LastDateTime { get; set; }
     }

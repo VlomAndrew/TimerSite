@@ -268,6 +268,14 @@
     <Compile Include="BossContextMigrations\202008062203226_update-1.Designer.cs">
       <DependentUpon>202008062203226_update-1.cs</DependentUpon>
     </Compile>
+    <Compile Include="BossContextMigrations\202008071251391_update-2.cs" />
+    <Compile Include="BossContextMigrations\202008071251391_update-2.Designer.cs">
+      <DependentUpon>202008071251391_update-2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BossContextMigrations\202008091415074_Update-3.cs" />
+    <Compile Include="BossContextMigrations\202008091415074_Update-3.Designer.cs">
+      <DependentUpon>202008091415074_Update-3.cs</DependentUpon>
+    </Compile>
     <Compile Include="BossContextMigrations\Configuration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BossViewModelsController.cs" />
@@ -314,6 +322,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -367,8 +376,9 @@
     <Content Include="Views\BossViewModels\Create.cshtml" />
     <Content Include="Views\BossViewModels\Delete.cshtml" />
     <Content Include="Views\BossViewModels\Details.cshtml" />
-    <Content Include="Views\BossViewModels\Edit.cshtml" />
+    <Content Include="Views\BossViewModels\Edit1.cshtml" />
     <Content Include="Views\BossViewModels\Index.cshtml" />
+    <Content Include="Views\BossViewModels\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -395,6 +405,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="BossContextMigrations\202008062203226_update-1.resx">
       <DependentUpon>202008062203226_update-1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BossContextMigrations\202008071251391_update-2.resx">
+      <DependentUpon>202008071251391_update-2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BossContextMigrations\202008091415074_Update-3.resx">
+      <DependentUpon>202008091415074_Update-3.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007302222507_InitialCreate.resx">
       <DependentUpon>202007302222507_InitialCreate.cs</DependentUpon>
