@@ -158,7 +158,11 @@ namespace FirstProject.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await UserManager.AddToRoleAsync(user.Id, "Solder");
+                    if (user.Email == "ikymiko@mail.ru" & user.UserName == "Kymiko")
+                    {
+                        await UserManager.AddToRoleAsync(user.Id, "Admin");
+                    }
+                    else await UserManager.AddToRoleAsync(user.Id, "Solder");
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771

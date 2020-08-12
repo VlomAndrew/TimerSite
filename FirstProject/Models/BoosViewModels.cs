@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using Microsoft.EntityFrameworkCore;
 
 namespace FirstProject.Models
@@ -21,6 +22,8 @@ namespace FirstProject.Models
 
         public string LastTime { get; set; }
 
+        public string Color { get; set; }
+        
         //public DateTime LastDateTime { get; set; }
     }
 

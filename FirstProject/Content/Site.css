@@ -54,6 +54,10 @@ textarea {
     
 }
 
+.fall_time_hid {
+    display: none;
+}
+
 tr {
-    background-color: aquamarine;
+    background-color: beige;
 }

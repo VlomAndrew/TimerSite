@@ -276,6 +276,10 @@
     <Compile Include="BossContextMigrations\202008091415074_Update-3.Designer.cs">
       <DependentUpon>202008091415074_Update-3.cs</DependentUpon>
     </Compile>
+    <Compile Include="BossContextMigrations\202008112058055_add-color.cs" />
+    <Compile Include="BossContextMigrations\202008112058055_add-color.Designer.cs">
+      <DependentUpon>202008112058055_add-color.cs</DependentUpon>
+    </Compile>
     <Compile Include="BossContextMigrations\Configuration.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BossViewModelsController.cs" />
@@ -334,6 +338,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\SetColorScripts.js" />
+    <Content Include="Sounds\alarm-clock-small-beeps_f1euwnnu.mp3" />
+    <Content Include="Sounds\jg-032316-sfx-clock-ticking-2.mp3" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -382,6 +389,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Imgs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -411,6 +419,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="BossContextMigrations\202008091415074_Update-3.resx">
       <DependentUpon>202008091415074_Update-3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BossContextMigrations\202008112058055_add-color.resx">
+      <DependentUpon>202008112058055_add-color.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202007302222507_InitialCreate.resx">
       <DependentUpon>202007302222507_InitialCreate.cs</DependentUpon>

@@ -49,15 +49,16 @@ namespace FirstProject.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,KdCount,KdTime")] BossViewModel bossViewModel)
+        public ActionResult Create([Bind(Include = "Id,Name,KdCount,KdTime,Color")] BossViewModel bossViewModel)
         {
             if (ModelState.IsValid)
             {
-                var dtnow = DateTime.Now;
-
-                var time_str = string.Format("{0}.{1}.{2}", dtnow.Hour < 10 ? "0"+dtnow.Hour.ToString():dtnow.Hour.ToString()
-                    , dtnow.Minute < 10 ? "0"+dtnow.Minute.ToString() : dtnow.Minute.ToString()
-                    , dtnow.Second < 10 ? "0" + dtnow.Second.ToString(): dtnow.Second.ToString());
+                var dtnow_now = DateTime.Now.ToUniversalTime();
+                TimeZoneInfo moscowTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time");
+                DateTime dtnow = TimeZoneInfo.ConvertTimeFromUtc(dtnow_now, moscowTimeZone);
+                var time_str = string.Format("{0}.{1}.{2}", dtnow.Hour < 10 ? "0" + dtnow.Hour.ToString() : dtnow.Hour.ToString()
+                    , dtnow.Minute < 10 ? "0" + dtnow.Minute.ToString() : dtnow.Minute.ToString()
+                    , dtnow.Second < 10 ? "0" + dtnow.Second.ToString() : dtnow.Second.ToString());
                 bossViewModel.LastTime = time_str;
                 db.BossViewModels.Add(bossViewModel);
                 db.SaveChanges();
@@ -97,14 +98,16 @@ namespace FirstProject.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                var dtnow = DateTime.Now;
-                
+                var dtnow_now = DateTime.Now.ToUniversalTime(); 
+                TimeZoneInfo moscowTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Russian Standard Time");
+                DateTime dtnow = TimeZoneInfo.ConvertTimeFromUtc(dtnow_now, moscowTimeZone);
                 var time_str = string.Format("{0}.{1}.{2}", dtnow.Hour < 10 ? "0" + dtnow.Hour.ToString() : dtnow.Hour.ToString()
                     , dtnow.Minute < 10 ? "0" + dtnow.Minute.ToString() : dtnow.Minute.ToString()
                     , dtnow.Second < 10 ? "0" + dtnow.Second.ToString() : dtnow.Second.ToString());
                 if (fl) 
                     bossViewModel.LastTime = time_str;
+                bossViewModel.LastTime = bossViewModel.LastTime.Replace(':', '.').Replace(',', '.').Replace('-', '.')
+                    .Replace(' ', '.');
                 db.Entry(bossViewModel).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

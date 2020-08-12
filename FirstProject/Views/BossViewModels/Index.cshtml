@@ -1,4 +1,4 @@
-﻿@using System.Threading
+﻿    @using System.Threading
 @model IEnumerable<FirstProject.Models.BossViewModel>
 
 @{
@@ -9,48 +9,110 @@
 
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width" charset=utf-8/>
     <link type="text/css" href="~/Content/Site.css" rel="stylesheet" />
     <title>Index</title>
 
 </head>
 <script type="text/javascript">
+
+    function sort(line) {
+        console.log('in sort');
+        for (var i = 0; i < line.length; i++) {
+            for (var j = 0; j < line.length - 1; j++) {
+                var elem1 = line[j];
+                var elem2 = line[j + 1];
+                var res_raw1 = elem1.getElementsByClassName('res_time')[0];
+                var res_raw2 = elem2.getElementsByClassName('res_time')[0];
+                const [fall_hours1, fall_min1, fall_sec1] = res_raw1.innerText.split('.').map(item => +item);
+                const [fall_hours2, fall_min2, fall_sec2] = res_raw2.innerText.split('.').map(item => +item);
+                if ((((((fall_hours1 * 60) + fall_min1) * 60) + fall_sec1) * 1000) >
+                    (((((fall_hours2 * 60) + fall_min2) * 60) + fall_sec2) * 1000)) {
+                    line[j] = elem2;
+                    line[j + 1] = elem1;
+
+                }
+            }
+        }
+        return line;
+    }
+
     function updateRespTime() {
-        const lines = document.getElementsByClassName('line');
+        var lines = document.getElementsByClassName('line');
 
         for (const line of lines) {
             const fall_raw = line.getElementsByClassName('fall_time')[0].innerText;
-            const resp_raw = line.getElementsByClassName('resp_time')[0];
 
-            const [fall_date_raw, fall_time_raw] = fall_raw.split(' ');
-            const [fall_day, fall_month, fall_year] = fall_date_raw.split('.');
 
-            const [fall_hours, fall_min, fall_sec] = fall_raw.split('.').map(item=>+item);
+
+            var res_raw = line.getElementsByClassName('res_time')[0];
+            var resp_raw = line.getElementsByClassName('resp_time')[0].innerText;
+
+
+
+            const [timer_hours, timer_min, timer_sec] = fall_raw.split('.').map(item=>+item);
+            const [fall_hours, fall_min, fall_sec] = res_raw.innerText.split('.').map(item=>+item);
 
 
             const fall_timestamp = (((((fall_hours * 60) + fall_min) * 60) + fall_sec) * 1000);
-            const [hours, minutes, seconds] = resp_raw.innerText.split('.').map(item => +item);
+            const last_timestamp = (((((timer_hours * 60) + timer_min) * 60) + timer_sec) * 1000);
+
+            const [hours, minutes, seconds] = resp_raw.split('.').map(item => +item);
 
             const resp_miliseconds = (((((hours * 60) + minutes) * 60) + seconds) * 1000);
             var time_now = new Date(Date.now());
             time_now.setMinutes(time_now.getMinutes() + time_now.getTimezoneOffset() + 180);
-            var time_now_mili = (((((time_now.getHours() * 60) + time_now.getMinutes()) * 60) + time_now.getSeconds()) *
-                1000);
-            const result_miliseconds = fall_timestamp + resp_miliseconds - time_now_mili;
-            const res_date = get_time(result_miliseconds,":");
-            const in_what_time = fall_timestamp + resp_miliseconds;
+            
+            const in_what_time = last_timestamp + resp_miliseconds * (parseInt(line.getElementsByClassName('cdcount')[0].innerText) + 1);
+
+            const result_miliseconds1 = fall_timestamp  * (parseInt(line.getElementsByClassName('cdcount')[0].innerText) + 1) - 1000;
+            const result_miliseconds = in_what_time - (((((time_now.getHours() * 60) + time_now.getMinutes()) * 60) + time_now.getSeconds()) * 1000);
+
+            const res_date = get_time(result_miliseconds,".");
 
 
 
-            line.getElementsByClassName('res_time')[0].innerText = res_date + "\nРеснется в " + get_time(in_what_time,":");
+            res_raw.innerText = res_date;
+            line.getElementsByClassName('res_time_in')[0].innerText = get_time(in_what_time, ":");
 
-            if (result_miliseconds < 1 ) {
+
+
+            if (result_miliseconds === 0) {
+                //звуковое оповещение
+                var audio = new Audio(); // Создаём новый элемент Audio
+                audio.src = '/Sounds/res.mp3'; // Указываем путь к звуку "клика"
+                //audio.autoplay = true; // Автоматически запускаем
+                audio.play();
+
+            }
+            else if (result_miliseconds < 0) {
 
                 const res = line.getElementsByClassName('fall_time');
-                res[0].innerText = get_time(time_now_mili, ".");
+                //res[0].innerText = get_time(in_what_time, ".");
+                var cdc = Math.trunc(result_miliseconds / resp_miliseconds) * -1;
+                console.log(cdc);
+                if (cdc > 0) {
+                    line.getElementsByClassName('cdcount')[0].innerText = cdc;
+                }
                 line.getElementsByClassName('cdcount')[0].innerText = parseInt(line.getElementsByClassName('cdcount')[0].innerText) + 1;
+                line.style.background = 'orange';
             }
+            else if (result_miliseconds === (2 * 60 * 1000) && result_miliseconds > 0) {
+                line.style.background = 'greenyellow';
+                var audio = new Audio(); // Создаём новый элемент Audio
+                audio.src = '/Sounds/2min.mp3'; // Указываем путь к звуку "клика"
+                //audio.autoplay = true; // Автоматически запускаем
+                audio.play();
+            }
+            else if (result_miliseconds < (2 * 60 * 1000 + 1) && result_miliseconds > 0) {
+                line.style.background = 'greenyellow';
+            }
+           
+
         }
+        
+        var l = sort(lines);
+        
     }
 
     function get_time(milisec,separ) {
@@ -141,7 +203,7 @@
 
         console.log(model[i]);
 
-        
+
 
         unvis();
     }
@@ -179,13 +241,19 @@
                 <tbody>
                 <tr>
                     <th>
+
+                    </th>
+                    <th>
                         Имя босса
                     </th>
                     <th>
                         Упал
                     </th>
                     <th>
-                        Реснется
+                        Реснется через
+                    </th>
+                    <th>
+                        Реснется в
                     </th>
                     <th>
                         По кд раз
@@ -207,20 +275,26 @@
                 @foreach (var item in Model)
                 {
 
-                    <tr class="line" id="line_{@item.Id}">
+                    <tr class="line" id="line_{@item.Id}" style="background: @item.Color">
+                        <td>
+                            <img src="@string.Format("/Imgs/Портрет_{0}.png",@item.Name.Replace(' ','_'))"/>
+                            
+                        </td>
                         <td>
                             @Html.HiddenFor(m => item.Name)
                             @Html.DisplayFor(modelItem => item.Name)
+                            
                         </td>
                         <td class="fall_time">
-                            
                             @Html.DisplayFor(modelItem => item.LastTime)
-                            
+                        </td>
+                        <td class="res_time">
+                            @Html.DisplayFor(modelItem => item.KdTime)
+
                         </td>
 
                         <td>
-
-                            <text class="res_time"></text>
+                            <text class="res_time_in"></text>
                         </td>
                         <td class="cdcount">
                             @Html.DisplayFor(modelItem => item.KdCount)
@@ -242,7 +316,7 @@
                                 </div>
                                 <div class="col-xs-6">
                                     @*<button type="button" class="button_set_time" id="button_set_time_conf{@item.Id}" onclick="vison('line_{@item.Id}')">Установить время</button>*@
-                                    @Html.ActionLink("Установить время", "Edit", new { id = item.Id, fl = false }, new { @class = "button_set_time", @id = "button_set_time_conf{@item.Id}" })
+                                    @Html.ActionLink("Установить время", "Edit", new {id = item.Id, fl = false}, new {@class = "button_set_time", @id = "button_set_time_conf{@item.Id}"})
                                 </div>
                             </div>
                             @*<div class="row">
@@ -281,11 +355,13 @@
                 </tbody>
             </table>
         </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-md-4">
 
-        <div class="col-md-4">
-
-            @Html.ActionLink("Create New", "Create", new {}, new {@class = "button_1596547873487"})
-        </div>
+                @Html.ActionLink("Create New", "Create", new {}, new {@class = "button_1596547873487"})
+            </div>
+        }
     </div>
 
     </body>
